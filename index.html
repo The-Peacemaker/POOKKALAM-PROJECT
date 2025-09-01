@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pookkalam Creator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* --- General Styles --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            overscroll-behavior: none;
+            background: radial-gradient(circle, #ffeb99, #ffda75);
+        }
+        .font-display {
+            font-family: 'Playfair+Display', serif;
+        }
+        .main-container {
+            touch-action: none;
+        }
+        canvas {
+            cursor: crosshair;
+            touch-action: none;
+        }
+        .palette-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .palette-item.selected {
+            transform: scale(1.15);
+            box-shadow: 0 0 0 3px #fb923c; /* orange-400 */
+            background-color: #fed7aa; /* orange-200 */
+        }
+        .control-panel label {
+            font-weight: 500;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #d1d5db; /* gray-300 */
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        .slider:hover {
+            opacity: 1;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f97316; /* orange-500 */
+            cursor: pointer;
+        }
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f97316; /* orange-500 */
+            cursor: pointer;
+        }
+        .btn {
+            transition: all 0.2s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .btn:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .modal-hidden {
+            pointer-events: none;
+        }
+        .modal-hidden .modal-overlay {
+            opacity: 0;
+        }
+        .modal-hidden .modal-content {
+            opacity: 0;
+            transform: scale(0.95) translateY(10px);
+        }
+
+        /* --- Initial Onam Pookkalam Styles --- */
+        #welcome-screen {
+            font-family: 'Dancing Script', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+            min-height: 100vh;
+            overflow: hidden;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: calc(2rem + 3vmin);
+            color: #8c0000;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1rem;
+            animation: fadeInDown 2s ease-in-out;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 15px #f7eea2, 0 0 25px #ff6f1c;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.02);
+                box-shadow: 0 0 25px #f7eea2, 0 0 40px #ff6f1c;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .wrapper {
+            position: relative;
+            width: 80vmin;
+            height: 80vmin;
+            max-width: 500px;
+            max-height: 500px;
+            animation: spin 120s linear infinite;
+        }
+
+        .c3 {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(#089627 0%, #044712 55%, #fdb009 0%, #fdb009 63%, #97062a 0%, #97062a 20%);
+        }
+
+        .wrapper2 {
+            width: 65%;
+            height: 65%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .c4, .c5, .c6, .c7, .c8, .c9, .c10, .c11 {
+            width: 43%;
+            height: 43%;
+            top: 20%;
+            left: 50%;
+            position: absolute;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(#fdb009 20%, #ff6f1c 38%, #970612 55%, #1a0003 75%);
+            z-index: 10;
+        }
+
+        .c5 { top: 50%; left: 20%; z-index: 8; }
+        .c6 { top: 80%; left: 50%; z-index: 6; }
+        .c7 { top: 50%; left: 80%; z-index: 4; }
+        .c8 { top: 30%; left: 30%; z-index: 9; }
+        .c9 { top: 70%; left: 30%; z-index: 7; }
+        .c10 { top: 70%; left: 70%; z-index: 3; }
+        .c11 { top: 30%; left: 70%; z-index: 5; }
+
+        .center1 {
+            width: 70%;
+            height: 70%;
+            top: 50%;
+            left: 50%;
+            position: absolute;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(#97062a 0%, #97062a 4%, #f7eea2 0%, #f7eea2 13%, #044712 0%, #044712 28%, #ff6f1c 0%, #ff6f1c 42%, #97062a 0%, #97062a 56%, #96085b 0%, #96085b 67%, #111111 0%, #111111 100%);
+            z-index: 21;
+            animation: pulse 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-800 overflow-hidden">
+    
+    <!-- Initial Welcome Screen -->
+    <div id="welcome-screen">
+        <h1 class="title">Happy Onam</h1>
+        <div class="wrapper">
+            <div class="c1">
+                <div class="c2">
+                    <div class="c3">
+                        <div class="wrapper2">
+                            <div class="c4"></div>
+                            <div class="c5"></div>
+                            <div class="c6"></div>
+                            <div class="c7"></div>
+                            <div class="c8"></div>
+                            <div class="c9"></div>
+                            <div class="c10"></div>
+                            <div class="c11"></div>
+                            <div class="center1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="create-btn" class="btn mt-8 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-lg" style="font-family: 'Inter', sans-serif;">Create Your Own</button>
+    </div>
+
+    <!-- Main Pookkalam Creator -->
+    <div class="main-container hidden flex-col lg:flex-row h-screen w-screen bg-orange-50">
+        
+        <!-- Controls & Palette Panel -->
+        <aside class="w-full lg:w-80 bg-white/80 backdrop-blur-sm shadow-lg p-4 lg:p-6 flex flex-col order-2 lg:order-1 overflow-y-auto">
+            <h1 class="font-display text-3xl font-bold text-orange-600 mb-2" style="font-family: 'Playfair Display', serif;">Pookkalam</h1>
+            <p class="text-sm text-slate-500 mb-6">Create your own digital floral arrangement.</p>
+
+            <!-- Controls -->
+            <div class="control-panel space-y-5 mb-6">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="symmetry-slider" class="text-sm">Symmetry</label>
+                        <span id="symmetry-value" class="text-sm font-semibold bg-orange-100 text-orange-600 px-2 py-0.5 rounded">8</span>
+                    </div>
+                    <input type="range" min="1" max="32" value="8" class="slider" id="symmetry-slider">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="size-slider" class="text-sm">Size</label>
+                        <span id="size-value" class="text-sm font-semibold bg-orange-100 text-orange-600 px-2 py-0.5 rounded">20</span>
+                    </div>
+                    <input type="range" min="5" max="100" value="20" class="slider" id="size-slider">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 gap-2 mb-6">
+                 <button id="undo-btn" class="btn text-sm bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2 px-3 rounded-lg flex items-center justify-center" title="Undo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/></svg>
+                </button>
+                <button id="clear-btn" class="btn text-sm bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-3 rounded-lg flex items-center justify-center" title="Clear Canvas">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                </button>
+            </div>
+
+            <!-- Flower Palette -->
+            <p class="text-sm font-medium mb-3">Palette</p>
+            <div id="palette" class="grid grid-cols-5 gap-3 flex-grow">
+                <!-- Palette items will be generated here -->
+            </div>
+        </aside>
+
+        <!-- Canvas Area -->
+        <main class="flex-1 flex items-center justify-center p-4 bg-grid-orange-100/50 order-1 lg:order-2">
+            <canvas id="pookkalam-canvas" class="bg-white rounded-full shadow-2xl"></canvas>
+        </main>
+    </div>
+
+    <!-- Clear Confirmation Modal -->
+    <div id="clear-modal" class="modal-hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        <div class="modal-content bg-white w-full max-w-sm rounded-2xl shadow-xl p-6 text-center">
+            <h3 class="text-xl font-bold text-slate-800 mb-2">Clear Canvas</h3>
+            <p class="text-slate-500 mb-6">Are you sure you want to erase your beautiful Pookkalam? This action cannot be undone.</p>
+            <div class="flex justify-center gap-4">
+                <button id="cancel-clear-btn" class="btn font-semibold text-slate-600 bg-slate-200 hover:bg-slate-300 px-8 py-2.5 rounded-lg">Cancel</button>
+                <button id="confirm-clear-btn" class="btn font-semibold text-white bg-red-500 hover:bg-red-600 px-8 py-2.5 rounded-lg">Clear</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const createBtn = document.getElementById('create-btn');
+            const mainContainer = document.querySelector('.main-container');
+            const canvas = document.getElementById('pookkalam-canvas');
+            const ctx = canvas.getContext('2d');
+            const paletteContainer = document.getElementById('palette');
+            const symmetrySlider = document.getElementById('symmetry-slider');
+            const symmetryValue = document.getElementById('symmetry-value');
+            const sizeSlider = document.getElementById('size-slider');
+            const sizeValue = document.getElementById('size-value');
+            const undoBtn = document.getElementById('undo-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const clearModal = document.getElementById('clear-modal');
+            const confirmClearBtn = document.getElementById('confirm-clear-btn');
+            const cancelClearBtn = document.getElementById('cancel-clear-btn');
+
+            // State
+            let symmetry = 8;
+            let brushSize = 20;
+            let history = [];
+            let currentFlower = null;
+            let isDrawing = false;
+            
+            const flowers = [
+                { id: 'petal-red', svg: `<svg viewBox="0 0 100 100"><path d="M50 0 Q65 40 50 100 Q35 40 50 0 Z" fill="#ef4444"/></svg>`, draw: (c, size) => { c.fillStyle = '#ef4444'; c.beginPath(); c.moveTo(0, -size / 2); c.quadraticCurveTo(size / 4, 0, 0, size / 2); c.quadraticCurveTo(-size / 4, 0, 0, -size / 2); c.fill(); } },
+                { id: 'petal-yellow', svg: `<svg viewBox="0 0 100 100"><path d="M50 0 Q65 40 50 100 Q35 40 50 0 Z" fill="#f59e0b"/></svg>`, draw: (c, size) => { c.fillStyle = '#f59e0b'; c.beginPath(); c.moveTo(0, -size / 2); c.quadraticCurveTo(size / 4, 0, 0, size / 2); c.quadraticCurveTo(-size / 4, 0, 0, -size / 2); c.fill(); } },
+                { id: 'circle-pink', svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#ec4899"/></svg>`, draw: (c, size) => { c.fillStyle = '#ec4899'; c.beginPath(); c.arc(0, 0, size / 2, 0, Math.PI * 2); c.fill(); } },
+                { id: 'circle-orange', svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#f97316"/></svg>`, draw: (c, size) => { c.fillStyle = '#f97316'; c.beginPath(); c.arc(0, 0, size / 2, 0, Math.PI * 2); c.fill(); } },
+                { id: 'leaf-green', svg: `<svg viewBox="0 0 100 100"><path d="M20 50 Q50 20 80 50 Q50 80 20 50 Z" fill="#22c55e"/></svg>`, draw: (c, size) => { c.fillStyle = '#22c55e'; c.beginPath(); c.moveTo(-size/2, 0); c.quadraticCurveTo(0, -size/2, size/2, 0); c.quadraticCurveTo(0, size/2, -size/2, 0); c.fill(); } },
+                { id: 'leaf-lime', svg: `<svg viewBox="0 0 100 100"><path d="M20 50 Q50 20 80 50 Q50 80 20 50 Z" fill="#84cc16"/></svg>`, draw: (c, size) => { c.fillStyle = '#84cc16'; c.beginPath(); c.moveTo(-size/2, 0); c.quadraticCurveTo(0, -size/2, size/2, 0); c.quadraticCurveTo(0, size/2, -size/2, 0); c.fill(); } },
+                { id: 'teardrop-blue', svg: `<svg viewBox="0 0 100 100"><path d="M50 10 C 20 40, 20 70, 50 90 C 80 70, 80 40, 50 10 Z" fill="#3b82f6"/></svg>`, draw: (c, size) => { c.fillStyle = '#3b82f6'; c.beginPath(); c.moveTo(0, -size/2); c.bezierCurveTo(-size/2, -size/4, -size/3, size/2, 0, size/2); c.bezierCurveTo(size/3, size/2, size/2, -size/4, 0, -size/2); c.fill(); } },
+                { id: 'teardrop-purple', svg: `<svg viewBox="0 0 100 100"><path d="M50 10 C 20 40, 20 70, 50 90 C 80 70, 80 40, 50 10 Z" fill="#8b5cf6"/></svg>`, draw: (c, size) => { c.fillStyle = '#8b5cf6'; c.beginPath(); c.moveTo(0, -size/2); c.bezierCurveTo(-size/2, -size/4, -size/3, size/2, 0, size/2); c.bezierCurveTo(size/3, size/2, size/2, -size/4, 0, -size/2); c.fill(); } },
+                { id: 'star-gold', svg: `<svg viewBox="0 0 100 100"><path d="M50 0 L61 35 L98 35 L68 57 L79 91 L50 68 L21 91 L32 57 L2 35 L39 35 Z" fill="#facc15"/></svg>`, draw: (c, size) => { c.fillStyle = '#facc15'; c.beginPath(); const r = size/2; for(let i=0; i<5; i++){ c.lineTo(Math.cos((18+i*72)/180*Math.PI)*r, -Math.sin((18+i*72)/180*Math.PI)*r); c.lineTo(Math.cos((54+i*72)/180*Math.PI)*r*0.5, -Math.sin((54+i*72)/180*Math.PI)*r*0.5); } c.closePath(); c.fill(); } },
+                { id: 'ring-rose', svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="35" stroke="#f43f5e" stroke-width="15" fill="none"/></svg>`, draw: (c, size) => { c.strokeStyle = '#f43f5e'; c.lineWidth = size/4; c.beginPath(); c.arc(0, 0, size/2 - c.lineWidth/2, 0, 2*Math.PI); c.stroke(); } },
+                { id: 'diamond-cyan', svg: `<svg viewBox="0 0 100 100"><path d="M50 0 L100 50 L50 100 L0 50 Z" fill="#06b6d4"/></svg>`, draw: (c, size) => { c.fillStyle = '#06b6d4'; c.beginPath(); c.moveTo(0, -size/2); c.lineTo(size/2, 0); c.lineTo(0, size/2); c.lineTo(-size/2, 0); c.closePath(); c.fill(); } },
+                { id: 'heart-love', svg: `<svg viewBox="0 0 100 100"><path d="M50 85 C-20 45, 25 0, 50 30 C 75 0, 120 45, 50 85 Z" fill="#e11d48"/></svg>`, draw: (c, size) => { c.fillStyle = '#e11d48'; c.beginPath(); const s = size*0.06; c.moveTo(0*s, 1.25*s); c.bezierCurveTo(-3*s, -1.5*s, -6*s, 0.5*s, 0*s, 4*s); c.moveTo(0*s, 1.25*s); c.bezierCurveTo(3*s, -1.5*s, 6*s, 0.5*s, 0*s, 4*s); c.fill(); } },
+                { id: 'slash-white', svg: `<svg viewBox="0 0 100 100" transform="rotate(45)"><rect x="45" y="10" width="10" height="80" fill="#f1f5f9"/></svg>`, draw: (c, size) => { c.fillStyle = '#f1f5f9'; c.fillRect(-size/8, -size/2, size/4, size); } },
+                { id: 'gradient-sphere-purple', svg: `<svg viewBox="0 0 100 100"><defs><radialGradient id="grad1" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#d8b4fe"/><stop offset="100%" stop-color="#7e22ce"/></radialGradient></defs><circle cx="50" cy="50" r="40" fill="url(#grad1)"/></svg>`, draw: (c, size) => { const r = size/2; const grad = c.createRadialGradient(-r*0.3, -r*0.3, 0, 0, 0, r); grad.addColorStop(0, '#d8b4fe'); grad.addColorStop(1, '#7e22ce'); c.fillStyle = grad; c.beginPath(); c.arc(0, 0, r, 0, Math.PI * 2); c.fill(); } },
+                { id: 'chevron-indigo', svg: `<svg viewBox="0 0 100 100"><path d="M20 30 L50 60 L80 30 L50 0 Z" fill="#4f46e5"/></svg>`, draw: (c, size) => { c.fillStyle = '#4f46e5'; c.beginPath(); const s = size/2; c.moveTo(-s*0.8, -s*0.3); c.lineTo(0, s*0.4); c.lineTo(s*0.8, -s*0.3); c.lineTo(0, -s); c.closePath(); c.fill(); } }
+            ];
+
+            // --- Initialization ---
+            function init() {
+                populatePalette();
+                addEventListeners();
+                selectFlower(flowers[0]);
+                // Canvas setup is delayed until the user clicks "Create"
+            }
+
+            function setupCanvas() {
+                const container = canvas.parentElement;
+                // Use a slight delay to ensure container has its final dimensions after being un-hidden
+                setTimeout(() => {
+                    const size = Math.min(container.clientWidth, container.clientHeight) * 0.9;
+                    canvas.width = size;
+                    canvas.height = size;
+                    redrawCanvas();
+                }, 50);
+            }
+
+            function populatePalette() {
+                flowers.forEach(flower => {
+                    const item = document.createElement('div');
+                    item.className = 'palette-item w-full aspect-square bg-slate-100 rounded-lg p-2 cursor-pointer hover:bg-slate-200';
+                    item.innerHTML = flower.svg;
+                    item.dataset.flowerId = flower.id;
+                    item.addEventListener('click', () => selectFlower(flower));
+                    paletteContainer.appendChild(item);
+                });
+            }
+
+            function selectFlower(flower) {
+                currentFlower = flower;
+                document.querySelectorAll('.palette-item').forEach(el => {
+                    el.classList.toggle('selected', el.dataset.flowerId === flower.id);
+                });
+            }
+
+            // --- Event Listeners ---
+            function addEventListeners() {
+                createBtn.addEventListener('click', () => {
+                    window.location.href = 'create.html';
+                });
+
+                window.addEventListener('resize', () => {
+                   if (!mainContainer.classList.contains('hidden')) {
+                       setupCanvas();
+                   }
+                });
+                
+                symmetrySlider.addEventListener('input', e => {
+                    symmetry = parseInt(e.target.value);
+                    symmetryValue.textContent = symmetry;
+                    redrawCanvas();
+                });
+
+                sizeSlider.addEventListener('input', e => {
+                    brushSize = parseInt(e.target.value);
+                    sizeValue.textContent = brushSize;
+                });
+                
+                undoBtn.addEventListener('click', undo);
+                clearBtn.addEventListener('click', showClearModal);
+                
+                canvas.addEventListener('pointerdown', handlePointerDown);
+                canvas.addEventListener('pointermove', handlePointerMove);
+                canvas.addEventListener('pointerup', handlePointerUp);
+                canvas.addEventListener('pointerleave', handlePointerUp);
+
+                confirmClearBtn.addEventListener('click', clear);
+                cancelClearBtn.addEventListener('click', hideClearModal);
+                clearModal.querySelector('.modal-overlay').addEventListener('click', hideClearModal);
+            }
+            
+            // --- Drawing Logic ---
+            function handlePointerDown(e) {
+                isDrawing = true;
+                drawOnCanvas(e);
+            }
+            function handlePointerMove(e) {
+                if (isDrawing) drawOnCanvas(e);
+            }
+            function handlePointerUp() {
+                isDrawing = false;
+            }
+
+            function drawOnCanvas(e) {
+                e.preventDefault();
+                if (!currentFlower) return;
+                
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+
+                const dx = x - centerX;
+                const dy = y - centerY;
+
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx);
+                
+                const newAction = { flower: currentFlower, size: brushSize, points: [] };
+
+                for (let i = 0; i < symmetry; i++) {
+                    const currentAngle = angle + (i * 2 * Math.PI) / symmetry;
+                    const newX = dist * Math.cos(currentAngle);
+                    const newY = dist * Math.sin(currentAngle);
+                    newAction.points.push({ x: newX, y: newY, angle: currentAngle });
+                }
+                
+                history.push(newAction);
+                redrawCanvas();
+            }
+            
+            function redrawCanvas() {
+                if(canvas.width === 0) return; // Don't draw if canvas not sized
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawGuides();
+                
+                history.forEach(action => {
+                    const flowerDrawer = action.flower.draw;
+                    action.points.forEach(p => {
+                        ctx.save();
+                        ctx.translate(canvas.width / 2 + p.x, canvas.height / 2 + p.y);
+                        ctx.rotate(p.angle + Math.PI / 2);
+                        flowerDrawer(ctx, action.size);
+                        ctx.restore();
+                    });
+                });
+            }
+
+            function drawGuides() {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                ctx.strokeStyle = '#fde68a';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([2, 4]);
+                for (let i = 0; i < symmetry; i++) {
+                    const angle = (i * 2 * Math.PI) / symmetry;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(centerX + centerX * Math.cos(angle), centerY + centerY * Math.sin(angle));
+                    ctx.stroke();
+                }
+                ctx.setLineDash([]);
+            }
+
+            // --- Actions ---
+            function undo() {
+                history.pop();
+                redrawCanvas();
+            }
+            function showClearModal() {
+                 clearModal.classList.remove('modal-hidden');
+            }
+            function hideClearModal() {
+                clearModal.classList.add('modal-hidden');
+            }
+            function clear() {
+                history = [];
+                hideClearModal();
+                redrawCanvas();
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>
+

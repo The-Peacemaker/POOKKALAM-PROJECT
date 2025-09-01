@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pookkalam Creator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="create.css">
+</head>
+<body class="bg-orange-50 text-slate-800 overflow-hidden">
+
+    <div class="main-container flex flex-col lg:flex-row h-screen w-screen">
+        
+        <!-- Controls & Palette Panel -->
+        <aside class="w-full lg:w-80 bg-white/80 backdrop-blur-sm shadow-lg p-4 lg:p-6 flex flex-col order-2 lg:order-1 overflow-y-auto">
+            <h1 class="font-display text-3xl font-bold text-orange-600 mb-2">Pookkalam</h1>
+            <p class="text-sm text-slate-500 mb-6">Create your own digital floral arrangement.</p>
+
+            <!-- Controls -->
+            <div class="control-panel space-y-5 mb-6">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="symmetry-slider" class="text-sm">Symmetry</label>
+                        <span id="symmetry-value" class="text-sm font-semibold bg-orange-100 text-orange-600 px-2 py-0.5 rounded">8</span>
+                    </div>
+                    <input type="range" min="1" max="32" value="8" class="slider" id="symmetry-slider">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="size-slider" class="text-sm">Size</label>
+                        <span id="size-value" class="text-sm font-semibold bg-orange-100 text-orange-600 px-2 py-0.5 rounded">20</span>
+                    </div>
+                    <input type="range" min="5" max="100" value="20" class="slider" id="size-slider">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-1 gap-2 mb-6">
+                 <button id="undo-btn" class="btn text-sm bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2 px-3 rounded-lg flex items-center justify-center" title="Undo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/></svg>
+                </button>
+            </div>
+
+            <!-- Flower Palette -->
+            <p class="text-sm font-medium mb-3">Palette</p>
+            <div id="palette" class="grid grid-cols-5 gap-3 flex-grow">
+                <!-- Palette items will be generated here -->
+            </div>
+        </aside>
+
+        <!-- Canvas Area -->
+        <main class="flex-1 flex items-center justify-center p-4 bg-grid-orange-100/50 order-1 lg:order-2">
+            <canvas id="pookkalam-canvas" class="bg-white rounded-full shadow-2xl"></canvas>
+        </main>
+    </div>
+
+    <script src="create.js"></script>
+</body>
+</html>
