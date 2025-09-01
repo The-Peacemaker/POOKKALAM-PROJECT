@@ -19,6 +19,7 @@ There are no special installation steps required. Just clone or download the rep
 
 # Run
 Open the `index.html` file in your web browser to start the application.
+[Live Site](https://pookkalam.netlify.app/)
 
 ### Project Documentation
 The code is documented within the HTML and JavaScript files. `index.html` serves as the welcome page, which leads to `create.html`, the main application. The core logic for drawing, handling the palette, and managing controls is located in `create.js`.
@@ -34,7 +35,7 @@ The code is documented within the HTML and JavaScript files. `index.html` serves
 *Caption: Another example of a Pookkalam design, showcasing the radial symmetry feature.*
 
 # Video
-[Add your demo video link here]
+[demo video link](https://drive.google.com/file/d/1CDtG085gTRE2Fq-B5xAFBuJih2gcfcX-/view?usp=sharing)
 *This video would demonstrate the user selecting different flower patterns, adjusting the size and symmetry, and drawing a complete Pookkalam on the canvas from start to finish.*
 
 ---
