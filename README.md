@@ -3,7 +3,8 @@
 # ✨Code-A-Pookalam✨
 
 ## Basic Details
-### Name: Pookkalam Creator
+### Name: Benedict Chacko Mathew
+### Project Name : Pookkalam Creator
 
 ### Project Description
 This project is a creative web application that lets you design and create your own beautiful digital "Pookkalam" (floral rangoli). You can choose from a variety of flower petals and shapes from a palette, adjust their size, and use a symmetry tool to create intricate, mirrored patterns. It's a fun and artistic tool to celebrate the festival of Onam digitally!
